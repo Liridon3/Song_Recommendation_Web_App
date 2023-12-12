@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Recommendation App</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Add jQuery UI CSS for styling the autocomplete dropdown -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- Autocomplete functionality -->
+    <script>
+    $(function () {
+        $("#track_id").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/autocomplete",
+                    method: "GET",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function (event, ui) {
+                $("#track_id").val(ui.item.value);
+                return false;
+            }
+        });
+    });
+</script>
+
+</head>
+
+<body>
+    <div id="left-container">
+        <h1>Song Recommendation App</h1>
+        <!-- Handle User Entered Songs that Don't Exist by Displaying flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="post">
+            <!-- Add the autocomplete to the song title input -->
+            <label for="track_id">Enter a song title:</label>
+            <input type="text" id="track_id" name="selected_track_id" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if user_song is not none and not user_song.empty %}
+            <!-- Display user-entered song and recommendations -->
+            <br>
+            <p>Selected Song: {{ user_song['track_name'] }} by {{ user_song['track_artist'] }}</p>
+            <br>
+            <!-- Display recommended songs -->
+            <p>Top {{ N }} Recommended Songs:</p>
+            <ul>
+                {% for _, song in recommended_songs.iterrows() %}
+                    <li>{{ song['track_name'] }} - {{ song['track_artist'] }} </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+    <!-- Displaying the data visualization -->
+    </div>
+    <div id="first-data-container">
+        <div id="wss_plot_container">
+            {% include 'wss_plot.html' %}
+        </div>
+        <div id="davies_bouldin_container">
+            {% include 'davies_bouldin_visualization.html' %}
+        </div>
+    </div>
+    <div id="second-data-container">
+        <div id="top_popular_songs">
+            {% include 'top_popular_songs.html' %}
+        </div>
+        <div id="genre_popularity">
+            {% include 'genre_popularity.html' %}
+        </div>
+    </div>
+
+</body>
+
+</html>
