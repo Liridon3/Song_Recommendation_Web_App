@@ -60,8 +60,9 @@ This Flask application provides a song recommendation feature using Spotify song
 
 ## Project Structure
 
-- `app/`: Contains the Flask application, routes, and logic.
+- `application.py/`: Contains the Flask application, routes, and logic.
 - `templates/`: HTML templates for the web interface.
+- `static/`: CSS style sheet
 - `spotify_songs.csv`: Dataset file with Spotify song metadata.
 - `requirements.txt`: Lists the Python package dependencies.
 
