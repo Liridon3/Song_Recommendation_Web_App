@@ -156,7 +156,7 @@ def index():
         # Exclude the user-entered song from recommendations
         cluster_songs = cluster_songs[cluster_songs['track_id'] != user_song['track_id']]
 
-        # Calculate cosine similarity between the user song and cluster songs
+        # Get data ready to calculate cosine similarity between the user song and cluster songs
         data_for_clustering['track_id'] = track_ids
         user_song_cluster = data.loc[data['track_id'] == selected_track_id, 'cluster'].values[0]
         cluster_songs_data = data[data['cluster'] == user_song_cluster].index
@@ -179,7 +179,6 @@ def index():
 
 
 if __name__ == '__main__':
-    # Elastic Beanstalk initalizes the application to listen on port 8000.
-    # You can override this with the PORT environment variable.
-    port = int(os.environ.get('PORT', 8000))
-    application.run(host='0.0.0.0', port=port)
+    #port = int(os.environ.get('PORT', 8000))
+    #application.run(host='0.0.0.0', port=port)
+    application.run()
